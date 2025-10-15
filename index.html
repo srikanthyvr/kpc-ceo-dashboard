@@ -466,16 +466,44 @@
 </head>
     <script>
 (function() {
-    const password = "KPC2025"; // Change this password
-    const entered = prompt("Enter Dashboard Password:");
+    const correctPassword = "KPC2025Dashboard"; // Change this to your password
+    let authenticated = false;
     
-    if (entered !== password) {
-        document.body.innerHTML = "<h1 style='text-align:center; margin-top:100px; font-family:Arial;'>Access Denied</h1><p style='text-align:center;'>Contact IT support for access.</p>";
-        throw new Error("Access denied");
+    // Check if already authenticated in this session
+    if (sessionStorage.getItem('kpc_auth') === 'true') {
+        authenticated = true;
+    }
+    
+    // Keep asking until correct password or user gives up
+    while (!authenticated) {
+        const entered = prompt("🔒 KPC CEO Dashboard - Enter Password:\n\n(Contact IT if you need access)");
+        
+        // If user clicks Cancel or closes prompt
+        if (entered === null) {
+            document.body.innerHTML = `
+                <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 100px;">
+                    <h1 style="color: #dc2626; font-size: 48px; margin-bottom: 20px;">🔒 Access Denied</h1>
+                    <p style="font-size: 20px; color: #666; margin-bottom: 30px;">Authentication required to access KPC CEO Dashboard</p>
+                    <button onclick="location.reload()" style="background: #24477f; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        Try Again
+                    </button>
+                    <p style="margin-top: 40px; color: #999; font-size: 14px;">Contact IT Support: it-support@kpc.com.kw</p>
+                </div>
+            `;
+            throw new Error("Access denied - authentication required");
+        }
+        
+        // Check if password is correct
+        if (entered === correctPassword) {
+            authenticated = true;
+            sessionStorage.setItem('kpc_auth', 'true');
+        } else {
+            alert("❌ Incorrect Password\n\nPlease try again or contact IT support.");
+        }
     }
 })();
-</script>
-<body>
+<body></script>
+
     <div class="container">
         <div class="header">
             <div class="ai-badge">
