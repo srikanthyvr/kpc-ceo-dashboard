@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>KPC CEO Mobile Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-nav-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-indicator {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .menu-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 60px;
+            padding: 16px;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header-greeting {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e3c72;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Quick Stats Cards */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e3c72;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.positive {
+            color: #22c55e;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* Section Tabs */
+        .section-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+        }
+
+        .section-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-chip {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-chip.active {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        /* KPI Cards */
+        .kpi-section {
+            display: none;
+        }
+
+        .kpi-section.active {
+            display: block;
+        }
+
+        .kpi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .kpi-title {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .ai-chip {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .kpi-metric {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e3c72;
+        }
+
+        .kpi-unit {
+            font-size: 14px;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .kpi-trend {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+        }
+
+        .kpi-trend.up {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .kpi-trend.down {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* AI Chatbot Button */
+        .ai-fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+            z-index: 99;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ai-fab:active {
+            transform: scale(0.95);
+        }
+
+        .ai-fab::before {
+            content: '🤖';
+            font-size: 28px;
+        }
+
+        /* AI Chatbot Modal */
+        .ai-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+        }
+
+        .ai-modal.active {
+            display: flex;
+        }
+
+        .ai-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-header h3 {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-suggestions {
+            padding: 12px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .ai-suggestions h4 {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #fafbfc;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.ai .message-bubble {
+            background: white;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .ai-input-area {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            z-index: 98;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            color: #9ca3af;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: #1e3c72;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Insight Box */
+        .insight-box {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .metric-highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="top-nav-title">
+            🛢️ KPC CEO
+            <span class="ai-indicator">AI</span>
+        </div>
+        <button class="menu-btn">☰</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-greeting">Good morning, CEO</div>
+            <div class="header-title">Your Command Center</div>
+            <div class="header-subtitle">
+                <span class="live-dot"></span>
+                Real-time data • Updated 2 min ago
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-label">Production</div>
+                <div class="stat-value">2.59M</div>
+                <div class="stat-change positive">↑ 3.2% bpd</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Revenue</div>
+                <div class="stat-value">KD 36.1B</div>
+                <div class="stat-change negative">↓ 3.7%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Gas Output</div>
+                <div class="stat-value">618M</div>
+                <div class="stat-change positive">↑ 2.8% scfd</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Flaring</div>
+                <div class="stat-value">0.51%</div>
+                <div class="stat-change positive">↓ 25%</div>
+            </div>
+        </div>
+
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <div class="tab-chip active" onclick="switchSection('production')">🔧 Production</div>
+            <div class="tab-chip" onclick="switchSection('finance')">💰 Financial</div>
+            <div class="tab-chip" onclick="switchSection('esg')">🌍 ESG</div>
+            <div class="tab-chip" onclick="switchSection('safety')">🛡️ Safety</div>
+        </div>
+
+        <!-- Production Section -->
+        <div class="kpi-section active" id="production">
+            <div class="kpi-list">
+                <div class="kpi-card" onclick="openAI('Tell me about our oil production performance')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Daily Oil Production Capacity</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">2.59M</div>
+                        <div class="kpi-unit">bpd</div>
+                    </div>
+                    <span class="kpi-trend up">↑ +3.2% vs FY23/24</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Analyze heavy crude production growth')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Heavy Crude Oil Production</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">95K</div>
+                        <div class="kpi-unit">bpd</div>
+                    </div>
+                    <span class="kpi-trend up">↑ +18.75% YoY</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('What drove our record gas production?')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Non-Associated Gas Production</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">618M</div>
+                        <div class="kpi-unit">scfd</div>
+                    </div>
+                    <span class="kpi-trend up">↑ +2.8% YoY - Record high</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Why is 100% target achievement significant?')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Annual Target Achievement</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">100%</div>
+                        <div class="kpi-unit">complete</div>
+                    </div>
+                    <span class="kpi-trend up">✓ First time in 7 years</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Drilling operations analysis')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">New Wells Drilled</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">498</div>
+                        <div class="kpi-unit">wells</div>
+                    </div>
+                    <span class="kpi-trend up">↑ +18.3% acceleration</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finance Section -->
+        <div class="kpi-section" id="finance">
+            <div class="kpi-list">
+                <div class="kpi-card" onclick="openAI('Why did revenue decrease?')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Total Revenue</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">KD 36.1B</div>
+                    </div>
+                    <span class="kpi-trend down">↓ -3.7% vs FY23/24</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Net profit analysis')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Net Profit</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">KD 1.4B</div>
+                    </div>
+                    <span class="kpi-trend down">↓ -6.7% margin maintained</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('How should we optimize CAPEX?')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">CAPEX Investment</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">KD 1.9B</div>
+                    </div>
+                    <span class="kpi-trend down">↓ -11.2% strategic allocation</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('KOTC financial performance')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">KOTC Net Profit</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">KD 151.3M</div>
+                    </div>
+                    <span class="kpi-trend up">Excellent operations</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESG Section -->
+        <div class="kpi-section" id="esg">
+            <div class="kpi-list">
+                <div class="kpi-card" onclick="openAI('Are we on track for net-zero by 2050?')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Gas Flaring Rate</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">0.51%</div>
+                    </div>
+                    <span class="kpi-trend up">↓ -25% • Net-zero path</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Carbon emissions trajectory')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">GHG Emissions Reduction</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">8,360</div>
+                        <div class="kpi-unit">tons/year</div>
+                    </div>
+                    <span class="kpi-trend up">Solar energy projects</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Workforce efficiency analysis')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Total Workforce</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">22,301</div>
+                    </div>
+                    <span class="kpi-trend down">↓ -2.7% optimization</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Kuwaitization progress')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Kuwaitization Rate</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">91%</div>
+                    </div>
+                    <span class="kpi-trend up">↑ +0.2pp regional leader</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Section -->
+        <div class="kpi-section" id="safety">
+            <div class="kpi-list">
+                <div class="kpi-card" onclick="openAI('Safety performance trends')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Mina Abdullah Safety Score</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">102.6</div>
+                    </div>
+                    <span class="kpi-trend up">🥇 #1 globally (Marsh Survey)</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Marine safety excellence')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">Marine Pollution Incidents</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">0</div>
+                    </div>
+                    <span class="kpi-trend up">✓ 203,531 nautical miles</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('KUFPEC safety record')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">KUFPEC Safe Working Hours</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">6.2M</div>
+                        <div class="kpi-unit">hours</div>
+                    </div>
+                    <span class="kpi-trend up">✓ Zero injuries</span>
+                </div>
+
+                <div class="kpi-card" onclick="openAI('Awards and recognition')">
+                    <div class="kpi-header">
+                        <div class="kpi-title">KOTC Green Shipping Award</div>
+                        <div class="ai-chip">AI</div>
+                    </div>
+                    <div class="kpi-metric">
+                        <div class="kpi-value">Awarded</div>
+                    </div>
+                    <span class="kpi-trend up">Maritime Standards Org</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI FAB Button -->
+    <div class="ai-fab" onclick="toggleAI()"></div>
+
+    <!-- AI Modal -->
+    <div class="ai-modal" id="aiModal">
+        <div class="ai-header">
+            <h3>🤖 Ask Anything</h3>
+            <button class="close-btn" onclick="toggleAI()">×</button>
+        </div>
+
+        <div class="ai-suggestions">
+            <h4>💡 Quick Questions</h4>
+            <div class="suggestion-chips">
+                <span class="suggestion-chip" onclick="askQuestion('2040 targets')">2040 Targets</span>
+                <span class="suggestion-chip" onclick="askQuestion('Revenue analysis')">Revenue</span>
+                <span class="suggestion-chip" onclick="askQuestion('Net-zero status')">Net-Zero</span>
+                <span class="suggestion-chip" onclick="askQuestion('Safety trends')">Safety</span>
+                <span class="suggestion-chip" onclick="askQuestion('Al-Zour issues')">Al-Zour</span>
+            </div>
+        </div>
+
+        <div class="ai-messages" id="aiMessages">
+            <div class="message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-bubble">
+                    <strong>Welcome to KPC AI Assistant!</strong><br><br>
+                    I have real-time access to all operations, financial, and ESG data. Ask me anything about KPC's performance!
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-input-area">
+            <input type="text" class="ai-input" id="aiInput" placeholder="Ask about KPC operations..." onkeypress="handleEnter(event)">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span>📊</span>
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>📈</span>
+            <span class="nav-label">Analytics</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>🎯</span>
+            <span class="nav-label">Targets</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>⚙️</span>
+            <span class="nav-label">Settings</span>
+        </a>
+    </div>
+
+    <script>
+        // Section switching
+        function switchSection(section) {
+            // Update tabs
+            document.querySelectorAll('.tab-chip').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update sections
+            document.querySelectorAll('.kpi-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+        }
+
+        // AI Modal
+        function toggleAI() {
+            const modal = document.getElementById('aiModal');
+            modal.classList.toggle('active');
+        }
+
+        function openAI(question) {
+            toggleAI();
+            setTimeout(() => {
+                askQuestion(question);
+            }, 300);
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('aiInput');
+            const question = input.value.trim();
+            
+            if (question) {
+                addUserMessage(question);
+                input.value = '';
+                
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    const response = getAIResponse(question);
+                    addAIMessage(response);
+                }, 1500);
+            }
+        }
+
+        function askQuestion(question) {
+            addUserMessage(question);
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getAIResponse(question);
+                addAIMessage(response);
+            }, 1500);
+        }
+
+        function addUserMessage(text) {
+            const container = document.getElementById('aiMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">👤</div>
+                <div class="message-bubble">${text}</div>
+            `;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addAIMessage(html) {
+            const container = document.getElementById('aiMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-bubble">${html}</div>
+            `;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            const container = document.getElementById('aiMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-bubble">
+                    <span class="loading"></span>
+                </div>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function getAIResponse(question) {
+            const q = question.toLowerCase();
+
+            // 2040 Targets
+            if (q.includes('2040') || q.includes('target')) {
+                return `<strong>📊 2040 Progress</strong><br><br>
+                <div class="insight-box">
+                <strong>Oil:</strong> <span class="metric-highlight">68% complete</span><br>
+                <strong>Petrochemicals:</strong> <span class="metric-highlight">52% complete</span>
+                </div>
+                <strong>Key Gap:</strong> 1.28M bpd oil production needed.<br><br>
+                <strong>Critical Action:</strong> $450M water injection investment to unlock 180K bpd.<br><br>
+                <strong>Confidence:</strong> 94% achievable with timely execution.`;
+            }
+
+            // Revenue
+            if (q.includes('revenue') || q.includes('financial')) {
+                return `<strong>💰 Revenue Analysis</strong><br><br>
+                Revenue: <span class="metric-highlight">KD 36.1B (-3.7%)</span><br><br>
+                <strong>Root Causes:</strong><br>
+                • OPEC+ cuts: -$2.1B<br>
+                • Oil price decline: -$1.8B<br>
+                • Margin compression: -$900M<br><br>
+                <strong>Offsets:</strong><br>
+                • Gas revenue: +$420M<br>
+                • Heavy crude premium: +$180M<br><br>
+                <strong>Outlook:</strong> Al-Zour completion drives FY25/26 growth.`;
+            }
+
+            // Net-Zero
+            if (q.includes('net-zero') || q.includes('carbon') || q.includes('emission')) {
+                return `<strong>🌍 Net-Zero Status</strong><br><br>
+                <div class="insight-box">
+                ⚠️ <strong>Status:</strong> At risk - <span class="metric-highlight">12.3M tonnes gap</span> by 2050 without action
+                </div>
+                <strong>Current:</strong> 28.4M tonnes CO2e<br><br>
+                <strong>Required Investment:</strong> $8.2B<br>
+                • Carbon capture: $2.8B<br>
+                • Renewables: $3.1B<br>
+                • Efficiency: $1.6B<br><br>
+                <strong>Quick Win:</strong> KOC gas capture → $340M revenue + 2.8M tonnes reduction`;
+            }
+
+            // Safety
+            if (q.includes('safety')) {
+                return `<strong>🛡️ Safety Performance</strong><br><br>
+                <div class="insight-box">
+                <strong>Mina Abdullah:</strong> <span class="metric-highlight">#1 globally</span> (102.6 score)
+                </div>
+                <strong>Highlights:</strong><br>
+                • Zero marine pollution incidents<br>
+                • KUFPEC: 6.2M safe hours<br>
+                • Green Shipping Award winner<br><br>
+                <strong>Focus Area:</strong> Contractor safety improvement program ($12M).`;
+            }
+
+            // Al-Zour
+            if (q.includes('al-zour') || q.includes('alzour') || q.includes('refinery')) {
+                return `<strong>🏭 Al-Zour Analysis</strong><br><br>
+                <strong>Operating:</strong> <span class="metric-highlight">87% capacity</span> (523K vs 615K bpd)<br><br>
+                <strong>Opportunity Cost:</strong> $1.15B annually<br><br>
+                <strong>Root Causes:</strong><br>
+                • Catalyst degradation: 60%<br>
+                • Crude slate issue: 25%<br>
+                • Operations: 15%<br><br>
+                <strong>Solution:</strong> $28M catalyst replacement → $168M return in 4 months`;
+            }
+
+            // Production
+            if (q.includes('production') || q.includes('oil')) {
+                return `<strong>⚙️ Production Excellence</strong><br><br>
+                <span class="metric-highlight">2.59M bpd</span> capacity (+3.2%)<br><br>
+                <strong>Historic Achievement:</strong><br>
+                ✓ 100% target (first in 7 years)<br>
+                ✓ 498 new wells (+18.3%)<br>
+                ✓ Shut-ins: 14% → 5%<br><br>
+                <strong>Record:</strong> 618M scfd gas production<br><br>
+                <strong>Impact:</strong> +80K bpd from drilling acceleration`;
+            }
+
+            // CAPEX
+            if (q.includes('capex') || q.includes('investment')) {
+                return `<strong>💼 CAPEX Optimization</strong><br><br>
+                <strong>Budget:</strong> KD 1.9B (-11.2%)<br><br>
+                <strong>Optimization Opportunity:</strong><br>
+                Reallocate $1.2B → improve ROI from <span class="metric-highlight">19.8% to 24.1%</span><br><br>
+                <strong>Top Priority:</strong><br>
+                • KOC North Kuwait +$400M (28% IRR)<br>
+                • Vietnam JV +$200M (23% IRR)<br><br>
+                <strong>NPV Impact:</strong> +$1.69B over 5 years`;
+            }
+
+            // Default
+            return `<strong>🤖 Available Insights</strong><br><br>
+            I can analyze:<br>
+            • 2040 target progress<br>
+            • Revenue & financial trends<br>
+            • Net-zero carbon pathway<br>
+            • Safety performance<br>
+            • Al-Zour refinery issues<br>
+            • CAPEX optimization<br>
+            • Production operations<br><br>
+            Try asking about any of these areas!`;
+        }
+
+        // Prevent zoom on input focus (iOS)
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                document.body.style.zoom = '1.0';
+            });
+        });
+
+        // Add touch feedback
+        document.querySelectorAll('.kpi-card, .stat-card').forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

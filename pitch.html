@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPC CEO Dashboard - Strategic Investment Proposal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.4;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            padding: 60px 80px;
+            display: none;
+            position: relative;
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.dark {
+            background: #24477f;
+            color: #ffffff;
+        }
+
+        /* McKinsey Typography */
+        .action-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #24477f;
+            margin-bottom: 40px;
+            line-height: 1.3;
+            max-width: 95%;
+        }
+
+        .slide.dark .action-title {
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-family: 'Arial', sans-serif;
+            font-size: 20px;
+            color: #666666;
+            margin-bottom: 30px;
+        }
+
+        .slide.dark .subtitle {
+            color: #cccccc;
+        }
+
+        /* Stats Display */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .slide.dark .stats-row {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #24477f;
+            margin-bottom: 8px;
+        }
+
+        .slide.dark .stat-number {
+            color: #ffffff;
+        }
+
+        .stat-label {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #666666;
+            font-weight: bold;
+        }
+
+        .slide.dark .stat-label {
+            color: #cccccc;
+        }
+
+        /* MECE Grid */
+        .mece-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .mece-card {
+            border: 2px solid #24477f;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .slide.dark .mece-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+        }
+
+        .mece-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #24477f;
+            margin-bottom: 15px;
+        }
+
+        .slide.dark .mece-title {
+            color: #ffffff;
+        }
+
+        .mece-content {
+            font-family: 'Arial', sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #24477f;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #1a3660;
+        }
+
+        .nav-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #666666;
+            z-index: 1000;
+        }
+
+        /* Title Slide */
+        .title-slide {
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-size: 56px;
+            color: #24477f;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .title-slide h2 {
+            font-size: 36px;
+            color: #666666;
+            margin-bottom: 60px;
+            font-weight: normal;
+        }
+
+        .title-slide .info {
+            font-family: 'Arial', sans-serif;
+            font-size: 20px;
+            color: #999999;
+            line-height: 1.8;
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            background: #f8f9fa;
+            border-left: 4px solid #24477f;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .slide.dark .exec-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+        }
+
+        .summary-point {
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Comparison boxes */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .comparison-box {
+            padding: 30px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+
+        .comparison-box.before {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: #dc2626;
+        }
+
+        .comparison-box.after {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+        }
+
+        .comparison-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparison-box.before .comparison-title {
+            color: #dc2626;
+        }
+
+        .comparison-box.after .comparison-title {
+            color: #22c55e;
+        }
+
+        .comparison-content {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 50px 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: #24477f;
+            z-index: 1;
+        }
+
+        .timeline-item {
+            background: #ffffff;
+            border: 2px solid #24477f;
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .timeline-phase {
+            font-size: 14px;
+            font-weight: bold;
+            color: #24477f;
+        }
+
+        .timeline-days {
+            font-size: 18px;
+            font-weight: bold;
+            color: #24477f;
+            margin-top: 5px;
+        }
+
+        /* Action Box */
+        .action-box {
+            background: #24477f;
+            color: #ffffff;
+            padding: 40px;
+            margin: 40px 0;
+            border-radius: 4px;
+        }
+
+        .action-header {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .action-item {
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .action-item::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title Page -->
+    <div class="slide active title-slide">
+        <h1>CEO REAL-TIME DASHBOARD</h1>
+        <h2>Transforming KPC's $123B Operations<br>from Monthly Reports to Real-Time Command</h2>
+        <div class="info">
+            Strategic Investment Proposal<br>
+            Kuwait Petroleum Corporation<br>
+            <strong>Executive Leadership Team</strong>
+        </div>
+    </div>
+
+    <!-- Slide 2: Executive Summary -->
+    <div class="slide">
+        <div class="action-title">KPC's CEO requires real-time operational command to optimize $123B in annual revenue and achieve 2040 strategic targets</div>
+        
+        <div class="exec-summary">
+            <div class="summary-point">→ Current 30-day information lag creates $2.46B in missed optimization opportunities annually</div>
+            <div class="summary-point">→ Fragmented subsidiary reporting prevents integrated decision-making across 8 business units</div>
+            <div class="summary-point">→ Real-time dashboard delivers 383% ROI through operational optimization and crisis prevention</div>
+            <div class="summary-point">→ 90-day implementation transforms CEO from reactive manager to proactive strategic leader</div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">$123B</div>
+                <div class="stat-label">Annual Revenue</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">Days Decision Lag</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Subsidiary Reports</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">383%</div>
+                <div class="stat-label">Expected ROI</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Current State Problem -->
+    <div class="slide">
+        <div class="action-title">CEO operates with 30-day information lag across fragmented subsidiary reports, missing critical decision windows</div>
+
+        <div class="mece-grid">
+            <div class="mece-card">
+                <div class="mece-title">Decision Lag Crisis</div>
+                <div class="mece-content">
+                    <strong>30+ days</strong> between operational reality and CEO visibility<br><br>
+                    • Record gas production (618M scfd) discovered weeks after achievement<br>
+                    • Safety incidents learned through monthly summaries<br>
+                    • Market opportunities missed during delayed response
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Fragmented Intelligence</div>
+                <div class="mece-content">
+                    <strong>8 separate reports</strong> requiring manual integration<br><br>
+                    • KOC, KNPC, KOTC, PIC operating independently<br>
+                    • No upstream-downstream connection visibility<br>
+                    • CEO mentally correlates cross-subsidiary impacts
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Reactive Leadership</div>
+                <div class="mece-content">
+                    <strong>After-the-fact</strong> crisis management<br><br>
+                    • Equipment failures discovered post-impact<br>
+                    • Supply chain disruptions cascade undetected<br>
+                    • Strategic course corrections delayed by months
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Strategic Blindness</div>
+                <div class="mece-content">
+                    <strong>2040 targets</strong> progress invisible<br><br>
+                    • 4.0 MMBPD oil production tracking absent<br>
+                    • 14.5 Mtpa petrochemicals milestone monitoring manual<br>
+                    • Bottleneck identification reactive, not predictive
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Solution Framework -->
+    <div class="slide dark">
+        <div class="action-title">Real-time CEO dashboard transforms fragmented monthly reports into integrated operational command center</div>
+
+        <div class="mece-grid">
+            <div class="mece-card">
+                <div class="mece-title">Instant Decision Support</div>
+                <div class="mece-content">
+                    <strong>30-second analysis</strong> of complex scenarios<br><br>
+                    • "Increase Al-Zour throughput?" → Upstream capacity, downstream demand, fleet availability, financial impact<br>
+                    • Real-time cross-subsidiary optimization<br>
+                    • Scenario modeling with immediate results
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Predictive Crisis Prevention</div>
+                <div class="mece-content">
+                    <strong>72-hour early warning</strong> system<br><br>
+                    • Equipment failure predictions before breakdown<br>
+                    • Supply chain disruption alerts<br>
+                    • Safety risk indicators with prevention protocols
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Strategic Progress Control</div>
+                <div class="mece-content">
+                    <strong>2040 vision tracking</strong> in real-time<br><br>
+                    • 4.0 MMBPD oil production progress monitoring<br>
+                    • 14.5 Mtpa petrochemicals milestone tracking<br>
+                    • Bottleneck identification and resolution alerts
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Integrated Value Chain View</div>
+                <div class="mece-content">
+                    <strong>360° operational visibility</strong><br><br>
+                    • Click-through drill-downs from summary to detail<br>
+                    • Upstream impacts on downstream performance<br>
+                    • Root cause analysis across all subsidiaries
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: CEO Value Proposition -->
+    <div class="slide">
+        <div class="action-title">Dashboard transforms CEO daily routine from 60-minute briefings to 5-minute strategic reviews with predictive insights</div>
+
+        <div class="comparison">
+            <div class="comparison-box before">
+                <div class="comparison-title">❌ WITHOUT DASHBOARD</div>
+                <div class="comparison-content">
+                    • <strong>60-minute morning briefings</strong><br>
+                    • 8 separate subsidiary presentations<br>
+                    • Manual data correlation required<br>
+                    • Reactive crisis discovery<br>
+                    • Board meeting preparation stress<br>
+                    • Intuition-based major decisions<br>
+                    • 30-day operational lag
+                </div>
+            </div>
+            <div class="comparison-box after">
+                <div class="comparison-title">✅ WITH CEO DASHBOARD</div>
+                <div class="comparison-content">
+                    • <strong>5-minute morning dashboard review</strong><br>
+                    • Integrated 8-subsidiary visualization<br>
+                    • Automated insight generation<br>
+                    • Predictive crisis prevention<br>
+                    • Instant board presentation readiness<br>
+                    • Data-driven strategic confidence<br>
+                    • Real-time operational command
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">92%</div>
+                <div class="stat-label">Time Savings</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">72hrs</div>
+                <div class="stat-label">Crisis Prevention</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">360°</div>
+                <div class="stat-label">Operational View</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Strategic Visibility</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Implementation Timeline -->
+    <div class="slide">
+        <div class="action-title">90-day phased implementation delivers immediate CEO value while building comprehensive real-time capabilities</div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-phase">INTEGRATION</div>
+                <div class="timeline-days">Days 1-30</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">TRAINING</div>
+                <div class="timeline-days">Days 31-60</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">OPTIMIZATION</div>
+                <div class="timeline-days">Days 61-90</div>
+            </div>
+        </div>
+
+        <div class="mece-grid">
+            <div class="mece-card">
+                <div class="mece-title">Phase 1: System Integration</div>
+                <div class="mece-content">
+                    • Connect all 8 subsidiary data feeds<br>
+                    • Establish real-time data pipelines<br>
+                    • Configure basic dashboard framework<br>
+                    • Implement security protocols<br>
+                    • Begin parallel testing
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Phase 2: CEO Enablement</div>
+                <div class="mece-content">
+                    • Custom dashboard configuration<br>
+                    • Executive navigation training<br>
+                    • Alert threshold calibration<br>
+                    • Mobile access setup<br>
+                    • Crisis scenario rehearsals
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Phase 3: Strategic Operation</div>
+                <div class="mece-content">
+                    • Full real-time operation launch<br>
+                    • Advanced analytics activation<br>
+                    • Predictive modeling deployment<br>
+                    • Performance optimization<br>
+                    • Expansion planning initiation
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Success Metrics</div>
+                <div class="mece-content">
+                    • 5-minute morning review achievement<br>
+                    • 72-hour crisis prevention tracking<br>
+                    • Real-time decision cycle measurement<br>
+                    • Strategic target progress monitoring<br>
+                    • ROI validation and reporting
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: ROI Analysis -->
+    <div class="slide">
+        <div class="action-title">$20M dashboard investment generates $76.6M annual return through operational optimization and crisis prevention</div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">383%</div>
+                <div class="stat-label">Annual ROI</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1.8x</div>
+                <div class="stat-label">Industry Benchmark</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">6 mos</div>
+                <div class="stat-label">Payback Period</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">$2.46B</div>
+                <div class="stat-label">5-Year Potential</div>
+            </div>
+        </div>
+
+        <div class="mece-grid">
+            <div class="mece-card">
+                <div class="mece-title">Investment Breakdown</div>
+                <div class="mece-content">
+                    <strong>Total: $20M over 90 days</strong><br><br>
+                    • Technology platform: $8M<br>
+                    • System integration: $6M<br>
+                    • Training & change mgmt: $3M<br>
+                    • Security & infrastructure: $2M<br>
+                    • Contingency (10%): $1M
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Annual Return Sources</div>
+                <div class="mece-content">
+                    <strong>Total: $76.6M annually</strong><br><br>
+                    • Operational optimization: $32M<br>
+                    • Crisis prevention: $24M<br>
+                    • Efficiency gains: $20.6M<br><br>
+                    <strong>Net Annual Benefit: $56.6M</strong>
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">5-Year Value Creation</div>
+                <div class="mece-content">
+                    <strong>Cumulative NPV: $2.46B</strong><br><br>
+                    • Year 1: $56.6M<br>
+                    • Years 2-5: Growth trajectory<br>
+                    • Compounding benefits<br>
+                    • Strategic positioning value<br>
+                    • Competitive advantage premium
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Risk-Adjusted Returns</div>
+                <div class="mece-content">
+                    <strong>Conservative Scenario: 250% ROI</strong><br><br>
+                    • Proven technology platform<br>
+                    • Industry benchmarks validated<br>
+                    • Phased implementation derisks<br>
+                    • Quick payback reduces exposure<br>
+                    • Scalable for future growth
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Actionable Recommendations -->
+    <div class="slide">
+        <div class="action-title">Immediate CEO approval required to begin 90-day transformation and capture $2.46B optimization opportunity</div>
+
+        <div class="action-box">
+            <div class="action-header">RECOMMENDED ACTIONS</div>
+            <div class="action-item">Approve $20M investment for CEO dashboard implementation</div>
+            <div class="action-item">Authorize 90-day development timeline with Phase 1 start in 30 days</div>
+            <div class="action-item">Designate executive sponsor for cross-subsidiary data integration</div>
+            <div class="action-item">Establish success metrics and ROI tracking framework</div>
+            <div class="action-item">Begin vendor selection process for dashboard technology platform</div>
+        </div>
+
+        <div class="mece-grid">
+            <div class="mece-card">
+                <div class="mece-title">Immediate Next Steps (Week 1)</div>
+                <div class="mece-content">
+                    • CEO decision on investment approval<br>
+                    • Executive team alignment meeting<br>
+                    • Initial vendor shortlist creation<br>
+                    • Project charter development<br>
+                    • Subsidiary liaison designation
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">30-Day Milestones</div>
+                <div class="mece-content">
+                    • Technology platform selection<br>
+                    • Integration architecture design<br>
+                    • Security framework approval<br>
+                    • Project team assembly<br>
+                    • Phase 1 implementation kickoff
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Success Validation</div>
+                <div class="mece-content">
+                    • 5-minute morning review achievement<br>
+                    • Real-time decision capability<br>
+                    • 72-hour crisis prevention tracking<br>
+                    • Cross-subsidiary optimization metrics<br>
+                    • ROI milestone confirmation
+                </div>
+            </div>
+
+            <div class="mece-card">
+                <div class="mece-title">Risk Mitigation</div>
+                <div class="mece-content">
+                    • Parallel current system operation<br>
+                    • Phased rollout approach<br>
+                    • Executive training program<br>
+                    • Change management support<br>
+                    • Performance monitoring protocols
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide Counter and Navigation -->
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">8</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            document.getElementById('totalSlides').textContent = totalSlides;
+            
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            if (direction === 1 && currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            } else if (direction === -1 && currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
